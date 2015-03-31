@@ -11,9 +11,9 @@ import sys
 #       make Content-Length automatic
 #       put the HTML in a different file/folder
 
- config constants
+#config constants
 CFG_SRV_BIND_IF = "localhost"
-CFG_SRV_BIND_PORT = 8080
+CFG_SRV_BIND_PORT = 8000
 CFG_SRV_LISTEN_BACKLOG = 10
 # end config
 
@@ -41,9 +41,11 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 # Bind socket to port 8081 on all interfaces
 # interfaces?
 server_address = (CFG_SRV_BIND_IF, CFG_SRV_BIND_PORT)
-print >>sys.stderr, "our URL is http://localhost:%d/" % server_address[1]
-print >>sys.stderr, "we can only be stopped by CTRL+C"
-# print "starting up on %s port %s" % server_address
+
+#python3
+print("our URL is http://localhost:%d/" % server_address[1], file=sys.stderr)
+print("we can only be stopped by CTRL+C", file=sys.stderr)
+
 server.bind(server_address)
 
 # Listen for connections
@@ -53,26 +55,26 @@ while True:
     try:
         # Wait for one incoming connection
         connection, client_address = server.accept()
-        print >>sys.stderr, "New connection from", client_address
+        print("New connection from", client_address, file=sys.stderr)
 
         # Don't care what browser wants, just send response
-        connection.send("%s" % HTTP_RESPONSE)
-        print >>sys.stderr, "Response sent."
+        connection.send(bytearray(HTTP_RESPONSE, 'UTF-8'))
+        print("Response sent.", file=sys.stderr)
 
         # Indicate going to disconnect
         connection.shutdown(socket.SHUT_RD | socket.SHUT_WR)
         
         # Close connection
         connection.close()
-        print >>sys.stderr, "Connection closed."
+        print("Connection closed.", file=sys.stderr)
 
     except:
         # CTRL+C pressed or something bad
-        print "\n *** Oh noes... ***"
+        print("\n *** Oh noes... ***")
         break
 
-print >>sys.stderr, "Shutting down..."
+print("Shutting down...", file=sys.stderr)
 server.close()
-print >>sys.stderr, "Goodbye."
+print("Goodbye.", file=sys.stderr)
 # Stop listening
 server.close()
